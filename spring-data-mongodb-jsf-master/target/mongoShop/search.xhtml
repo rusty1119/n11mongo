@@ -1,0 +1,184 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template/common.xhtml">
+
+        <ui:define name="pageTitle">
+            <h:outputText value="Product Search" />
+        </ui:define>
+
+        <ui:define name="content">
+            <f:event listener="#{productDetailBean.initProduct}" type="preRenderView" />
+            <h:form id="searchForm">
+
+                <p:growl id="mainGrowl" sticky="true"  />
+
+                <p:commandButton value="Kisileri Getir" icon="ui-icon-search"  actionListener="#{productSearchBean.doSearch}" update="dataTable"/>
+                <p:menubar style="border:none"> 					   	
+
+                    <p:menuitem value="Kisi Ekle" url="/detail.jsf" icon="ui-icon-document" />
+                </p:menubar>
+
+                <hr/>
+
+                <!--  Kisiler Datatable  -->
+                <p:dataTable id="dataTable" var="prod" value="#{productSearchBean.productList}"  
+                             rows="10">  
+
+                    <p:column>  
+                        <f:facet name="header">  
+                            <h:outputText value="id" />  
+                        </f:facet>  
+                        <h:outputText value="#{prod.sku}" />  
+                    </p:column>  
+
+
+
+                    <p:column>  
+                        <f:facet name="header">  
+                            <h:outputText value="Ad" />  
+                        </f:facet>  
+                        <h:outputText value="#{prod.title}" />  
+                    </p:column>  
+
+                    <p:column>  
+                        <f:facet name="header">  
+                            <h:outputText value="Soyad" />  
+                        </f:facet>  
+                        <h:outputText value="#{prod.publisher}" />  
+                    </p:column>  
+
+                    <p:column>  
+                        <f:facet name="header">  
+                            <h:outputText value="Telefon" />  
+                        </f:facet>  
+                        <h:outputText value="#{prod.details.author}" />  
+                    </p:column>  
+
+
+
+                    <p:column>  
+                        <f:facet name="header">  
+                            <h:outputText value="Edit" />  
+                        </f:facet>  
+                        <p:commandButton value="Edit" update=':panelForm:panelDialog' actionListener="#{productSearchBean.doEditDetail}"  oncomplete="updatekisiler.show();" ajax="true">
+                            <f:setPropertyActionListener target="#{productSearchBean.selectedProduct}" value="#{prod}" />
+                        </p:commandButton>
+                    </p:column>  
+
+                    <p:column>  
+                        <f:facet name="header">  
+                            <h:outputText value="Delete" />  
+                        </f:facet>
+
+                        <p:commandButton id="showDialogButton" value="Delete" oncomplete="confirmation.show()" ajax="true" update=":searchForm:confirmDialog">  
+                            <f:setPropertyActionListener target="#{productSearchBean.selectedProduct}" value="#{prod}" />
+                        </p:commandButton>
+
+                    </p:column>
+
+
+                </p:dataTable>
+
+                <!--  Kisiler Datatable                   -->	
+
+
+
+                <p:confirmDialog id="confirmDialog" message="Silmek istermisiniz(#{productSearchBean.selectedProduct.sku})?"  
+                                 header="Kisi Sil" severity="alert" widgetVar="confirmation">  
+
+                    <p:commandButton id="confirm" value="Yes" update="mainGrowl" oncomplete="confirmation.hide()"  
+                                     actionListener="#{productSearchBean.doDelete}" />  
+                    <p:commandButton id="decline" value="No" onclick="confirmation.hide();" type="button" />   
+
+                </p:confirmDialog>
+
+
+            </h:form>
+
+
+
+            <h:form id ='panelForm'>			
+                <p:growl id="trackGrowl" sticky="true"  />
+                <p:dialog id="updatekisiler" header="Kisileri Guncelle" widgetVar="updatekisiler" modal="true" height="600" width="1000" resizable="false">  
+                    <f:event listener="#{productDetailBean.initProduct}" type="preRenderView" />
+                    <p:growl id="mainGrowl" sticky="true"  />
+                    <p:panelGrid style="width:1024px" id='panelDialog'>  
+                        <f:facet name="header">
+                            <p:row>  
+                                <p:column colspan="2">  
+                                    Kisi Detaylari
+                                </p:column>
+                            </p:row>
+                        </f:facet>  
+                        <p:row> 
+                            <p:column>
+                                <h:outputLabel for="sku" value="Id: *" />
+                            </p:column>
+                            <p:column>  
+                                <p:inputText id="sku" required="true" value="#{productDetailBean.product.sku}" label="Sku"  rendered="#{productDetailBean.newProduct}"/>
+                                <h:outputText  value="#{productDetailBean.product.sku}"  rendered="#{not productDetailBean.newProduct}"/>
+                            </p:column>  
+                        </p:row>
+
+                        <p:row> 
+                            <p:column>
+                                <h:outputLabel for="title" value="Ad: *" />
+                            </p:column>
+                            <p:column>  
+                                <p:inputText id="title" required="true" value="#{productDetailBean.product.title}" label="Title" />
+                            </p:column>  
+                        </p:row> 
+
+                        <p:row> 
+                            <p:column>
+                                <h:outputLabel for="publisher" value="Soyad: *" />
+                            </p:column>
+                            <p:column>  
+                                <p:inputText id="publisher" required="true" value="#{productDetailBean.product.publisher}" label="Publisher" />
+                            </p:column>  
+                        </p:row> 
+
+
+
+
+
+
+
+                        <p:row> 
+                            <p:column>
+                                <h:outputLabel for="author" value="Tel: " />
+                            </p:column>
+                            <p:column>                       
+                                <p:inputMask value="#{productDetailBean.product.details.author}" id="author" label="Author" mask="(999) 999-9999"/> 
+                            </p:column>  
+                        </p:row> 
+
+
+
+
+                        <f:facet name="footer"> 
+                            <p:row>
+                                <p:column colspan="2">	 
+                                    <p:commandButton value="Save" icon="ui-icon-disk"  actionListener="#{productDetailBean.doSave}" update="mainGrowl" ajax="true" />
+                                    <p:button value="Back to Search" icon="ui-icon-back"  outcome="search.xhtml" />
+                                </p:column>
+                            </p:row>			    	  
+                        </f:facet>  
+                    </p:panelGrid> 	
+
+                </p:dialog> 
+            </h:form>
+
+
+
+
+
+
+        </ui:define>
+    </ui:composition>
+</html>

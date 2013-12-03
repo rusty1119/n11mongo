@@ -1,0 +1,102 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template/common.xhtml">
+
+        <ui:define name="pageTitle">
+            <h:outputText value="Kisi Ekleme" />
+        </ui:define>
+
+        <ui:define name="content">
+            <f:event listener="#{productDetailBean.initProduct}" type="preRenderView" />
+
+            <h:form id="mainForm">     	
+                <p:growl id="mainGrowl" sticky="true"  />
+                <p:panelGrid style="width:1024px">  
+                    <f:facet name="header">
+                        <p:row>  
+                            <p:column colspan="2">  
+                                Product Details
+                            </p:column>
+                        </p:row>
+                    </f:facet>  
+                    <p:row> 
+                        <p:column>
+                            <h:outputLabel for="sku" value="Id: *" />
+                        </p:column>
+                        <p:column>  
+                            <p:inputText id="sku" required="true" value="#{productDetailBean.product.sku}" label="Sku"  rendered="#{productDetailBean.newProduct}"/>
+                            <h:outputText  value="#{productDetailBean.product.sku}"  rendered="#{not productDetailBean.newProduct}"/>
+                        </p:column>  
+                    </p:row>
+
+                   
+                    <p:row> 
+                        <p:column>
+                            <h:outputLabel for="title" value="Ad: *" />
+                        </p:column>
+                        <p:column>  
+                            <p:inputText id="title" required="true" value="#{productDetailBean.product.title}" label="Title" />
+                        </p:column>  
+                    </p:row> 
+
+                    <p:row> 
+                        <p:column>
+                            <h:outputLabel for="publisher" value="Soyad: *" />
+                        </p:column>
+                        <p:column>  
+                            <p:inputText id="publisher" required="true" value="#{productDetailBean.product.publisher}" label="Publisher" />
+                        </p:column>  
+                    </p:row> 
+
+
+                    
+
+                   
+
+                  
+
+
+
+                    <p:row> 
+                        <p:column>
+                            <h:outputLabel for="author" value="Telefon: " />
+                        </p:column>
+                        <p:column>                        
+                           <p:inputMask value="#{productDetailBean.product.details.author}" id="author" mask="(999) 999-9999"/> 
+                        </p:column>  
+                    </p:row> 
+
+                   
+
+
+                    <p:row>  
+                        <p:column  > 
+
+                            <p:captcha label="Captcha" language="tr" theme="white" validatorMessage="lutfen tekrar deneyiniz"/>		
+                        </p:column>  
+                    </p:row> 
+
+
+
+                    <f:facet name="footer"> 
+                        <p:row>
+                            <p:column colspan="2">	 
+                                <p:commandButton value="Save" icon="ui-icon-disk"  actionListener="#{productDetailBean.doSave}" update="mainGrowl" ajax="true" />
+                                <p:button value="Back to Search" icon="ui-icon-back"  outcome="search.xhtml" />
+                            </p:column>
+                        </p:row>			    	  
+                    </f:facet>  
+                </p:panelGrid> 	
+
+
+            </h:form>
+
+
+
+        </ui:define>
+    </ui:composition>
+</html>		
